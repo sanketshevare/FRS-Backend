@@ -6,7 +6,13 @@ from .common import *
 
 # uncomment the following line to include i18n
 # from .i18n import *
-
+import environ
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+env.read_env(env.str('ENV_PATH', join(PROJECT_ROOT, '.env')))
 
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = True
@@ -22,9 +28,16 @@ LOGOUT_REDIRECT_URL = 'core_login'
 
 # ##### DATABASE CONFIGURATION ############################
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': join(PROJECT_ROOT, 'run', 'dev.sqlite3'),
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(PROJECT_ROOT, 'run', 'dev.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DBNAME'),
+        'USER': env('DBUSER'),
+        'PASSWORD': env('DBPASSWORD'),
+        'HOST': env('DBHOST'),
     }
 }
 
