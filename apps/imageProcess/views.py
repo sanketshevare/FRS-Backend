@@ -1,4 +1,3 @@
-
 from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework.response import Response
@@ -18,12 +17,14 @@ from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
 from sklearn.neighbors import NearestNeighbors
 import pickle
 import base64
+import os
+import csv
 
 from FRS.settings.common import MEDIA_ROOT, STATIC_ROOT, STATICFILES_DIRS, STATIC_ROOT_FILE
 
 # Load image embeddings and filenames
-feature_list = np.array(pickle.load(open(STATIC_ROOT_FILE +'/embeddings.pkl', 'rb')))
-filenames = pickle.load(open(STATIC_ROOT_FILE +'/filenames.pkl', 'rb'))
+feature_list = np.array(pickle.load(open(STATIC_ROOT_FILE + '/embeddings.pkl', 'rb')))
+filenames = pickle.load(open(STATIC_ROOT_FILE + '/filenames.pkl', 'rb'))
 
 # Load ResNet50 model
 model = ResNet50(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
@@ -57,24 +58,45 @@ def save_base64_image(base64_string, output_path):
     with open(output_path, "wb") as image_file:
         image_file.write(image_data)
 
+
 class Process_image(APIView):
     # permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-
+        global image_data, metadata_for_recommended
         img = request.FILES.get("image")
         file_content = ContentFile(img.read())
         file_name = default_storage.save('uploaded_image.jpg', file_content)
 
         # Create
-        recommendations = get_recommendations(MEDIA_ROOT+'/uploaded_image.jpg')
+        recommendations = get_recommendations(MEDIA_ROOT + '/' + file_name)
         recommended_images = [filenames[idx] for idx in recommendations]
         base64_images = []
+
+        csv_file_path = "static/dataset/nike-dataset.csv"
+
+        # Load CSV data
+        with open(csv_file_path, 'r', encoding='latin1') as csvfile:
+            csv_reader = csv.DictReader(csvfile)
+            csv_data = [row for row in csv_reader]
+
+        csv_lookup = {entry['image_name']: entry for entry in csv_data}
+
+        print("Recommended Images:", recommended_images)
+        print("All Image Names:",
+              [csv_lookup.get(os.path.basename(image_path), {}) for image_path in
+               recommended_images])
+
         for r_image in recommended_images:
+            print(os.path.basename(r_image))
+            metadata_for_recommended = [csv_lookup.get(os.path.basename(r_image), {}) for r_image in
+                                        recommended_images]
             base64_image = image_to_base64(r_image)
             base64_images.append(base64_image)
 
-        return JsonResponse({'recommendations': base64_images})
+        print(metadata_for_recommended)
+
+        return JsonResponse({'recommendations': base64_images, 'metadata': metadata_for_recommended})
 
 
 class Test(APIView):
@@ -93,6 +115,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
 
 class LogoutView(APIView):
     def post(self, request):
