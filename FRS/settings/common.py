@@ -50,7 +50,7 @@ DEFAULT_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'djoser',
-    'apps.users',
+    'apps.coupon',
     'apps.imageProcess',
 
 ]
@@ -242,7 +242,7 @@ EMAIL_USE_TLS = True  # or EMAIL_USE_SSL = True if your server uses SSL
 EMAIL_HOST_USER = 'sanketshevare7675@gmail.com'
 EMAIL_HOST_PASSWORD = 'BtrI308HNZfKmzsF'
 
-DOMAIN = '192.168.1.7:8000'
+DOMAIN = '192.168.0.101:8000'
 SITE_NAME = 'frs'
 
 DJOSER = {

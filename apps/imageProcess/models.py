@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
     # Demographic Fields required for Bahmni
     middle_name = models.CharField(max_length=200, null=True, blank=True)
     gender = models.CharField(max_length=200, null=True, blank=True, verbose_name=_("Gender"))
-    mobile_number = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    mobile_number = models.CharField(max_length=10, unique=True, null=True)
     birth_date = models.DateField(null=True, blank=True, verbose_name=_("Date of birth"))
 
     # Location specific fields

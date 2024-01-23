@@ -64,6 +64,7 @@ urlpatterns = [
     path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
 
     path('api/', include('imageProcess.urls')),  # Include the app's URLs
+    path('api/', include('coupon.urls')),  # Include the app's URLs
 
     # enable the admin interface
     path('admin/', admin.site.urls),
