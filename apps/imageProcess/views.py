@@ -19,6 +19,7 @@ from skimage.segmentation import mark_boundaries
 import cv2
 from django.shortcuts import render
 from FRS.settings.common import MEDIA_ROOT, STATIC_ROOT_FILE
+import time
 
 # Load image embeddings and filenames
 feature_list = np.array(pickle.load(open(STATIC_ROOT_FILE + '/embeddings.pkl', 'rb')))
@@ -95,6 +96,8 @@ class Process_image(APIView):
             {'recommendations': base64_images, 'explanations': explanations, 'metadata': metadata_for_recommended})
 
     def get_lime_explanation(self, image_path):
+        start_time = time.time()
+
         img_path = os.path.join(MEDIA_ROOT, image_path)
         img = image.load_img(img_path, target_size=(224, 224))
         img_array = image.img_to_array(img)
@@ -124,14 +127,26 @@ class Process_image(APIView):
         # Save the image with boundaries using OpenCV
         # text_explanation = self.get_text_explanation(image_path)
         pred_proba = model.predict(preprocessed_img)[0][ret_exp.top_labels[0]]
+        # Calculate the total number of boundary pixels
+        num_boundary_pixels = np.sum(mask)
+        end_time = time.time()
+        # Calculate the total area of the original image
+        total_image_area = temp.shape[0] * temp.shape[1]
+
+        # Calculate the percentage of boundary coverage
+        boundary_coverage_percentage = (num_boundary_pixels / total_image_area) * 100
+        # Calculate the percentage of boundary coverage
+        processing_time_in_seconds = end_time - start_time
 
         response_data = {
             "label": int(ret_exp.top_labels[0]),  # Convert to int
             "local_pred_shape": local_pred_list,
             "confidence": float(pred_proba),
-            # Add other relevant information as needed
+            "image_dimensions": (temp.shape[0], temp.shape[1]),
+            "num_boundary_pixels": int(num_boundary_pixels),
+            "boundary_coverage_percentage": float(boundary_coverage_percentage),
+            "explanation_processing_time": processing_time_in_seconds
         }
-        # Return the dictionary, not JsonResponse directly
         return response_data
 
     def get_text_explanation(self, image_path):
