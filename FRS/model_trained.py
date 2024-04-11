@@ -10,7 +10,6 @@ import os
 from tqdm import tqdm
 import pickle
 
-
 model = ResNet50(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 model.trainable = False
 
@@ -19,9 +18,9 @@ model = tensorflow.keras.Sequential([
     GlobalMaxPooling2D()
 ])
 
-
 # print(model.summary())
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+
 
 def extract_features(img_path, model):
     img = image.load_img(img_path, target_size=(224, 224))
@@ -36,8 +35,8 @@ def extract_features(img_path, model):
 
 filenames = []
 
-for file in os.listdir(DJANGO_ROOT + '/static/images'):
-    filenames.append(os.path.join(DJANGO_ROOT + '/static/images', file))
+for file in os.listdir(DJANGO_ROOT + '/static/nike'):
+    filenames.append(os.path.join(DJANGO_ROOT + '/static/nike', file))
 
 feature_list = []
 
