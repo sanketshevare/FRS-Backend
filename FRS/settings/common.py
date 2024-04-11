@@ -64,6 +64,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+"django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 # template stuff
@@ -266,3 +268,4 @@ DJOSER = {
 
 
 AUTH_USER_MODEL = 'imageProcess.CustomUser'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'

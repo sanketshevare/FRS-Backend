@@ -4,6 +4,9 @@ The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
 """
 # Django imports
+from django.conf import settings
+from django.conf.urls.static import static
+
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import include, re_path, path
@@ -69,3 +72,6 @@ urlpatterns = [
     # enable the admin interface
     path('admin/', admin.site.urls),
 ]
+
+
+
