@@ -269,3 +269,16 @@ DJOSER = {
 
 AUTH_USER_MODEL = 'imageProcess.CustomUser'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+
+import os
+from dotenv import load_dotenv
+import dj_database_url
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure the DATABASES dictionary
+DATABASES = {
+    "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
+}
