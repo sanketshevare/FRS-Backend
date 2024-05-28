@@ -1,4 +1,5 @@
 # views.py
+# coupons
 from rest_framework import generics
 from .models import CoupounsData
 from .serializers import CoupounDataSerializer
